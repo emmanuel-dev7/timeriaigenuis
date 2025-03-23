@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Génie en Herbe - Concours</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <script>
+        tailwind.config = {
+            darkMode: 'media',
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#4338ca',
+                        'primary-dark': '#3730a3',
+                        'secondary': '#0ea5e9',
+                        'accent': '#f59e0b',
+                        'dark': '#1e293b',
+                        'light': '#f8fafc'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'SF Pro', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'elegant': '0 4px 20px 0 rgba(0, 0, 0, 0.05)',
+                        'hover': '0 8px 30px rgba(0, 0, 0, 0.12)'
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slow': 'bounce 3s infinite'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Les styles restent identiques */
+        :root {
+            --color-team1: #4F46E5;
+            --color-team2: #DC2626;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Inter', 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            background-image:
+                radial-gradient(circle at 20% 35%, rgba(67, 56, 202, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(14, 165, 233, 0.05) 0%, transparent 50%);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #0f172a;
+                background-image:
+                    radial-gradient(circle at 20% 35%, rgba(67, 56, 202, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 75% 75%, rgba(14, 165, 233, 0.1) 0%, transparent 50%);
+                color: #f1f5f9;
+            }
+        }
+
+        .card {
+            transition: all 0.3s ease;
+            background: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .card {
+                background: #1e293b;
+                box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn {
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 10.01%);
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform 0.5s, opacity 0.5s;
+        }
+
+        .btn:active::after {
+            transform: scale(0, 0);
+            opacity: 0.3;
+            transition: 0s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .timer-circle {
+            width: 180px;
+            height: 180px;
+            position: relative;
+        }
+
+        .timer-circle-bg {
+            fill: none;
+            stroke: #e2e8f0;
+            stroke-width: 10;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .timer-circle-bg {
+                stroke: #334155;
+            }
+        }
+
+        .timer-circle-progress {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 1s linear;
+            filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.2));
+        }
+
+        .timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .timer-text {
+                color: #f1f5f9;
+            }
+        }
+
+        .flash {
+            animation: flash 0.5s infinite alternate;
+        }
+
+        @keyframes flash {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
+
+        .score-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .score-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-score {
+            font-weight: 700;
+            font-size: 3rem;
+            text-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .color-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+            margin: 0 4px;
+            border: 2px solid transparent;
+            transition: transform 0.2s ease, border 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .color-dot:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .color-dot.selected {
+            border: 3px solid #1e293b;
+            transform: scale(1.15);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .color-dot.selected {
+                border: 3px solid #f1f5f9;
+            }
+        }
+
+        .point-btn {
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .point-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.2) 50%,
+                    rgba(255, 255, 255, 0) 100%);
+            transition: all 0.5s ease;
+        }
+
+        .point-btn:hover::before {
+            left: 100%;
+        }
+
+        .team-display {
+            transition: all 0.3s ease;
+        }
+
+        .team-color-display {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin: 0 auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 4px solid white;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .team-color-display {
+                border: 4px solid #1e293b;
+            }
+        }
+
+        .team-color-display:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .animate-score {
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .slide-up {
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .subtle-bg {
+            background-color: #f8fafc;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(67, 56, 202, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.03) 0%, transparent 40%);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .subtle-bg {
+                background-color: #0f172a;
+                background-image:
+                    radial-gradient(circle at 10% 20%, rgba(67, 56, 202, 0.1) 0%, transparent 40%),
+                    radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.1) 0%, transparent 40%);
+            }
+        }
+
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            transition: all 0.3s ease;
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .time-preset {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .time-preset:hover {
+            transform: translateY(-2px);
+        }
+
+        .custom-time-input {
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .custom-time-input:focus {
+            border-color: var(--color-team1);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .custom-time-input {
+                border: 2px solid #334155;
+                background-color: #1e293b;
+                color: #f1f5f9;
+            }
+        }
+
+        .scrollable-area {
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+        }
+
+        .scrollable-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollable-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scrollable-area::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .scrollable-area {
+                scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+            }
+
+            .scrollable-area::-webkit-scrollbar-thumb {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+        }
+    </style>
+</head>
+
+<body class="h-full subtle-bg">
+    <!-- Page d'accueil -->
+    <div id="home-page" class="h-screen flex flex-col justify-center items-center px-4 py-6 fade-in">
+        <div class="w-full max-w-4xl">
+            <h1 class="text-4xl font-bold text-center mb-2 text-dark dark:text-light">MIABE SCOREBOARD</h1>
+            <p class="text-center text-gray-600 dark:text-gray-300 mb-6">Configurez les équipes pour commencer la compétition</p>
+
+            <div class="card p-6 slide-up">
+                <h2 class="text-2xl font-semibold mb-6 text-dark dark:text-light border-b pb-3">Configuration des équipes</h2>
+
+                <div class="space-y-6">
+                    <!-- Équipe 1 -->
+                    <div class="bg-blue-50 dark:bg-blue-900/30 p-5 rounded-xl">
+                        <h3 class="text-xl font-medium mb-3 text-blue-800 dark:text-blue-300">Équipe 1</h3>
+                        <div class="mb-4">
+                            <label for="team1-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom de l'équipe</label>
+                            <input type="text" id="team1-name" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Entrez le nom de l'équipe 1">
+                        </div>
+
+                        <div>
+                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Couleur de l'équipe</p>
+                            <div class="flex flex-wrap gap-2" id="team1-colors">
+                                <span class="color-dot selected" style="background-color: #4F46E5;" data-color="#4F46E5"></span>
+                                <span class="color-dot" style="background-color: #10B981;" data-color="#10B981"></span>
+                                <span class="color-dot" style="background-color: #F59E0B;" data-color="#F59E0B"></span>
+                                <span class="color-dot" style="background-color: #8B5CF6;" data-color="#8B5CF6"></span>
+                                <span class="color-dot" style="background-color: #EC4899;" data-color="#EC4899"></span>
+                                <span class="color-dot" style="background-color: #06B6D4;" data-color="#06B6D4"></span>
+                                <span class="color-dot" style="background-color: #14B8A6;" data-color="#14B8A6"></span>
+                                <span class="color-dot" style="background-color: #84CC16;" data-color="#84CC16"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Équipe 2 -->
+                    <div class="bg-red-50 dark:bg-red-900/30 p-5 rounded-xl">
+                        <h3 class="text-xl font-medium mb-3 text-red-800 dark:text-red-300">Équipe 2</h3>
+                        <div class="mb-4">
+                            <label for="team2-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom de l'équipe</label>
+                            <input type="text" id="team2-name" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Entrez le nom de l'équipe 2">
+                        </div>
+
+                        <div>
+                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Couleur de l'équipe</p>
+                            <div class="flex flex-wrap gap-2" id="team2-colors">
+                                <span class="color-dot" style="background-color: #4F46E5;" data-color="#4F46E5"></span>
+                                <span class="color-dot" style="background-color: #10B981;" data-color="#10B981"></span>
+                                <span class="color-dot" style="background-color: #F59E0B;" data-color="#F59E0B"></span>
+                                <span class="color-dot selected" style="background-color: #DC2626;" data-color="#DC2626"></span>
+                                <span class="color-dot" style="background-color: #EC4899;" data-color="#EC4899"></span>
+                                <span class="color-dot" style="background-color: #06B6D4;" data-color="#06B6D4"></span>
+                                <span class="color-dot" style="background-color: #14B8A6;" data-color="#14B8A6"></span>
+                                <span class="color-dot" style="background-color: #84CC16;" data-color="#84CC16"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 text-center">
+                    <button id="start-game" class="btn px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-md hover:shadow-lg transform transition-all">
+                        <span class="mr-2">Commencer le concours</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page de jeu -->
+    <div id="game-page" class="h-screen flex flex-col px-4 py-4 hidden">
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
+            <h1 class="text-2xl md:text-3xl font-bold text-dark dark:text-light">MIABE SCOREBOARD</h1>
+            <div class="flex gap-2">
+                <button id="toggle-score-section" class="btn px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 shadow-sm">
+                    Masquer Scores
+                </button>
+                <button id="toggle-timer-section" class="btn px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 shadow-sm">
+                    Masquer Minuteur
+                </button>
+                <button id="back-to-config" class="btn px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Modifier
+                </button>
+            </div>
+        </div>
+
+        <div id="game-content" class="flex-grow grid md:grid-cols-2 gap-4 h-full">
+            <!-- Section des équipes -->
+            <div id="score-section" class="card p-4 md:p-6 flex flex-col fade-in">
+                <h2 class="text-xl font-semibold mb-4 text-dark dark:text-light border-b pb-2 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Tableau des scores
+                </h2>
+
+                <div class="grid grid-cols-2 gap-4 flex-grow scrollable-area">
+                    <!-- Équipe 1 -->
+                    <div class="team-display score-card bg-blue-50 dark:bg-blue-900/30 p-4 rounded-xl text-center flex flex-col">
+                        <div id="team1-color-display" class="team-color-display mb-2" style="background-color: var(--color-team1);"></div>
+                        <div id="team1-display-name" class="text-lg font-semibold mb-1 text-blue-800 dark:text-blue-300">Équipe 1</div>
+                        <div id="team1-score" class="team-score text-blue-900 dark:text-blue-100 mb-3">0</div>
+
+                        <div class="space-y-1 mt-auto">
+                            <button data-team="1" data-points="10" class="add-points point-btn w-full px-2 py-1.5 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed btn shadow-sm hover:shadow text-sm" disabled>+10 pts</button>
+                            <button data-team="1" data-points="20" class="add-points point-btn w-full px-2 py-1.5 bg-blue-200 dark:bg-blue-700 text-blue-700 dark:text-blue-200 rounded-lg hover:bg-blue-300 dark:hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed btn shadow-sm hover:shadow text-sm" disabled>+20 pts</button>
+                            <button data-team="1" data-points="30" class="add-points point-btn w-full px-2 py-1.5 bg-blue-300 dark:bg-blue-600 text-blue-700 dark:text-blue-200 rounded-lg hover:bg-blue-400 dark:hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed btn shadow-sm hover:shadow text-sm" disabled>+30 pts</button>
+                            <button data-team="1" data-points="40" class="add-points point-btn w-full px-2 py-1.5 bg-blue-400 dark:bg-blue-500 text-blue-700 dark:text-blue-200 rounded-lg hover:bg-blue-500 dark:hover:bg-blue-400 disabled:opacity-50 disabled:cursor-not-allowed btn shadow-sm hover:shadow text-sm" disabled>+40 pts</button>
+                            <button data-team="1" data-points="-10" class="subtract-points point-btn w-full px-2 py-1.5 bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-200 rounded-lg hover:bg-red-200 dark:hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed btn shadow-sm hover:shadow text-sm" disabled>-10 pts</button>
+                        </div>
+                    </div>
+
+                    <!-- Équipe 2 -->
+                    <div class="team-display score-card bg-red-50 dark:bg-red-900/30 p-4 rounded-xl text-center flex flex-col">
+                        <div id="team2-color-display" class="team-color-display mb-2" style="background-color: var(--color-team2);"></div>
+                        <div id="team2-display-name" class="text-lg font-semibold mb-1 text-red-800 dark:text-red-300">Équipe 2</div>
+                        <div id="team2-score" class="team-score text-red-900 dark:text-red-100 mb-3">0</div>
+
+                        <div class="space-y-1 mt-auto">
+                            <button data-team="2" data-points="10" class="add-points point-btn w-full px-2 py-1.5 bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-200 rounded-lg hover:bg-red-200 dark:hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed btn shadow-sm hover:shadow text-sm" disabled>+10 pts</button>
+                            <button data-team="2" data-points="20" class="add-points point-btn w-full px-2 py-1.5 bg-red-200 dark:bg-red-700 text-red-700 dark:text-red-200 rounded-lg hover:bg-red-300 dark:hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed btn shadow-sm hover:shadow text-sm" disabled>+20 pts</button>
+                            <button data-team="2" data-points="30" class="add-points point-btn w-full px-2 py-1.5 bg-red-300 dark:bg-red-600 text-red-700 dark:text-red-200 rounded-lg hover:bg-red-400 dark:hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed btn shadow-sm hover:shadow text-sm" disabled>+30 pts</button>
+                            <button data-team="2" data-points="40" class="add-points point-btn w-full px-2 py-1.5 bg-red-400 dark:bg-red-500 text-red-700 dark:text-red-200 rounded-lg hover:bg-red-500 dark:hover:bg-red-400 disabled:opacity-50 disabled:cursor-not-allowed btn shadow-sm hover:shadow text-sm" disabled>+40 pts</button>
+                            <button data-team="2" data-points="-10" class="subtract-points point-btn w-full px-2 py-1.5 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed btn shadow-sm hover:shadow text-sm" disabled>-10 pts</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section du minuteur -->
+            <div id="timer-section" class="card p-4 md:p-6 flex flex-col fade-in">
+                <h2 class="text-xl font-semibold mb-4 text-dark dark:text-light border-b pb-2 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Minuteur
+                </h2>
+
+                <div class="flex flex-col items-center justify-center flex-grow">
+                    <div class="timer-circle mb-6">
+                        <svg width="180" height="180" viewBox="0 0 180 180">
+                            <circle class="timer-circle-bg" cx="90" cy="90" r="80" />
+                            <circle id="timer-progress" class="timer-circle-progress" cx="90" cy="90" r="80" style="stroke: var(--color-team1); stroke-dasharray: 502.4; stroke-dashoffset: 0;" />
+                        </svg>
+                        <div id="timer-text" class="timer-text">30</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 w-full max-w-xs mb-4">
+                        <button id="start-timer" class="btn px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-md hover:shadow-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                            </svg>
+                            Démarrer
+                        </button>
+                        <button id="reset-timer" class="btn px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                            </svg>
+                            Réinitialiser
+                        </button>
+                    </div>
+
+                    <div class="w-full max-w-xs">
+                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Préréglages de temps</p>
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            <button data-time="10" class="time-preset btn px-3 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm">
+                                10s
+                            </button>
+                            <button data-time="30" class="time-preset btn px-3 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm">
+                                30s
+                            </button>
+                            <button data-time="60" class="time-preset btn px-3 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm">
+                                1min
+                            </button>
+                            <button data-time="120" class="time-preset btn px-3 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm">
+                                2min
+                            </button>
+                            <button data-time="180" class="time-preset btn px-3 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm">
+                                3min
+                            </button>
+                            <button data-time="300" class="time-preset btn px-3 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm">
+                                5min
+                            </button>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="number" id="custom-time" min="1" max="300" class="custom-time-input w-full px-3 py-2 rounded-lg focus:outline-none mr-2" placeholder="Temps personnalisé (s)">
+                            <button id="set-custom-time" class="btn px-3 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-md hover:shadow-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de fin de partie -->
+    <div id="game-over-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <h2 class="text-2xl font-bold mb-4 text-dark dark:text-light">Temps écoulé !</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Le temps est écoulé. Voulez-vous continuer le jeu ou réinitialiser le minuteur ?</p>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button id="continue-game" class="btn flex-1 px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-md hover:shadow-lg">
+                    Continuer
+                </button>
+                <button id="reset-game" class="btn flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 shadow-sm">
+                    Réinitialiser
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Variables
+            let team1Score = 0;
+            let team2Score = 0;
+            let team1Color = '#4F46E5';
+            let team2Color = '#DC2626';
+            let timerInterval;
+            let timeLeft = 30;
+            let totalTime = 30;
+            let timerRunning = false;
+
+            // Éléments DOM
+            const homePage = document.getElementById('home-page');
+            const gamePage = document.getElementById('game-page');
+            const startGameBtn = document.getElementById('start-game');
+            const backToConfigBtn = document.getElementById('back-to-config');
+            const team1NameInput = document.getElementById('team1-name');
+            const team2NameInput = document.getElementById('team2-name');
+            const team1DisplayName = document.getElementById('team1-display-name');
+            const team2DisplayName = document.getElementById('team2-display-name');
+            const team1ScoreDisplay = document.getElementById('team1-score');
+            const team2ScoreDisplay = document.getElementById('team2-score');
+            const team1ColorDisplay = document.getElementById('team1-color-display');
+            const team2ColorDisplay = document.getElementById('team2-color-display');
+            const team1ColorDots = document.querySelectorAll('#team1-colors .color-dot');
+            const team2ColorDots = document.querySelectorAll('#team2-colors .color-dot');
+            const addPointsBtns = document.querySelectorAll('.add-points');
+            const subtractPointsBtns = document.querySelectorAll('.subtract-points');
+            const timerText = document.getElementById('timer-text');
+            const timerProgress = document.getElementById('timer-progress');
+            const startTimerBtn = document.getElementById('start-timer');
+            const resetTimerBtn = document.getElementById('reset-timer');
+            const timePresetBtns = document.querySelectorAll('.time-preset');
+            const customTimeInput = document.getElementById('custom-time');
+            const setCustomTimeBtn = document.getElementById('set-custom-time');
+            const gameOverModal = document.getElementById('game-over-modal');
+            const continueGameBtn = document.getElementById('continue-game');
+            const resetGameBtn = document.getElementById('reset-game');
+            const scoreSection = document.getElementById('score-section');
+            const timerSection = document.getElementById('timer-section');
+            const toggleScoreBtn = document.getElementById('toggle-score-section');
+            const toggleTimerBtn = document.getElementById('toggle-timer-section');
+            const gameContent = document.getElementById('game-content');
+
+            // Initialisation
+            updateTimerDisplay();
+            updateGridLayout();
+
+            // Événements
+            startGameBtn.addEventListener('click', startGame);
+            backToConfigBtn.addEventListener('click', backToConfig);
+
+            team1ColorDots.forEach(dot => {
+                dot.addEventListener('click', () => selectTeamColor(1, dot));
+            });
+
+            team2ColorDots.forEach(dot => {
+                dot.addEventListener('click', () => selectTeamColor(2, dot));
+            });
+
+            addPointsBtns.forEach(btn => {
+                btn.addEventListener('click', addPoints);
+            });
+
+            subtractPointsBtns.forEach(btn => {
+                btn.addEventListener('click', subtractPoints);
+            });
+
+            startTimerBtn.addEventListener('click', toggleTimer);
+            resetTimerBtn.addEventListener('click', resetTimer);
+
+            timePresetBtns.forEach(btn => {
+                btn.addEventListener('click', setTimePreset);
+            });
+
+            setCustomTimeBtn.addEventListener('click', setCustomTime);
+
+            continueGameBtn.addEventListener('click', continueGame);
+            resetGameBtn.addEventListener('click', resetGame);
+            toggleScoreBtn.addEventListener('click', toggleScoreSection);
+            toggleTimerBtn.addEventListener('click', toggleTimerSection);
+
+            // Fonctions
+            function startGame() {
+                const team1Name = team1NameInput.value.trim() || 'Équipe 1';
+                const team2Name = team2NameInput.value.trim() || 'Équipe 2';
+
+                team1DisplayName.textContent = team1Name;
+                team2DisplayName.textContent = team2Name;
+
+                document.documentElement.style.setProperty('--color-team1', team1Color);
+                document.documentElement.style.setProperty('--color-team2', team2Color);
+
+                team1ScoreDisplay.textContent = team1Score;
+                team2ScoreDisplay.textContent = team2Score;
+
+                enablePointButtons();
+
+                homePage.classList.add('hidden');
+                gamePage.classList.remove('hidden');
+            }
+
+            function backToConfig() {
+                if (timerRunning) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    startTimerBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                        </svg>
+                        Démarrer
+                    `;
+                }
+
+                gamePage.classList.add('hidden');
+                homePage.classList.remove('hidden');
+            }
+
+            function selectTeamColor(team, dot) {
+                const dots = team === 1 ? team1ColorDots : team2ColorDots;
+                dots.forEach(d => d.classList.remove('selected'));
+                dot.classList.add('selected');
+                const color = dot.getAttribute('data-color');
+                if (team === 1) team1Color = color;
+                else team2Color = color;
+            }
+
+            function addPoints(e) {
+                const team = e.target.getAttribute('data-team');
+                const points = parseInt(e.target.getAttribute('data-points'));
+
+                if (team === '1') {
+                    team1Score += points;
+                    team1ScoreDisplay.textContent = team1Score;
+                    team1ScoreDisplay.classList.add('animate-score');
+                    setTimeout(() => team1ScoreDisplay.classList.remove('animate-score'), 500);
+                } else {
+                    team2Score += points;
+                    team2ScoreDisplay.textContent = team2Score;
+                    team2ScoreDisplay.classList.add('animate-score');
+                    setTimeout(() => team2ScoreDisplay.classList.remove('animate-score'), 500);
+                }
+            }
+
+            function subtractPoints(e) {
+                const team = e.target.getAttribute('data-team');
+                const points = Math.abs(parseInt(e.target.getAttribute('data-points')));
+
+                if (team === '1') {
+                    team1Score = Math.max(-500, team1Score - points);
+                    team1ScoreDisplay.textContent = team1Score;
+                    team1ScoreDisplay.classList.add('animate-score');
+                    setTimeout(() => team1ScoreDisplay.classList.remove('animate-score'), 500);
+                } else {
+                    team2Score = Math.max(-500, team2Score - points);
+                    team2ScoreDisplay.textContent = team2Score;
+                    team2ScoreDisplay.classList.add('animate-score');
+                    setTimeout(() => team2ScoreDisplay.classList.remove('animate-score'), 500);
+                }
+            }
+
+            function enablePointButtons() {
+                addPointsBtns.forEach(btn => btn.disabled = false);
+                subtractPointsBtns.forEach(btn => btn.disabled = false);
+            }
+
+            function disablePointButtons() {
+                addPointsBtns.forEach(btn => btn.disabled = true);
+                subtractPointsBtns.forEach(btn => btn.disabled = true);
+            }
+
+            function toggleTimer() {
+                if (timerRunning) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    startTimerBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                        </svg>
+                        Démarrer
+                    `;
+                    disablePointButtons();
+                } else {
+                    timerInterval = setInterval(updateTimer, 1000);
+                    timerRunning = true;
+                    startTimerBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        Pause
+                    `;
+                    enablePointButtons();
+                }
+            }
+
+            function updateTimer() {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    disablePointButtons();
+                    gameOverModal.classList.add('active');
+                    gameOverModal.classList.remove('hidden');
+                    timerText.classList.add('flash');
+                    startTimerBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                        </svg>
+                        Démarrer
+                    `;
+                }
+            }
+
+            function updateTimerDisplay() {
+                timerText.textContent = timeLeft;
+                const circumference = 2 * Math.PI * 80;
+                const dashOffset = circumference * (1 - timeLeft / totalTime);
+                timerProgress.style.strokeDasharray = circumference;
+                timerProgress.style.strokeDashoffset = dashOffset;
+
+                if (timeLeft <= 5) timerProgress.style.stroke = '#DC2626';
+                else if (timeLeft <= 10) timerProgress.style.stroke = '#F59E0B';
+                else timerProgress.style.stroke = 'var(--color-team1)';
+            }
+
+            function resetTimer() {
+                if (timerRunning) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    startTimerBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                        </svg>
+                        Démarrer
+                    `;
+                }
+                timeLeft = totalTime;
+                updateTimerDisplay();
+                timerText.classList.remove('flash');
+                disablePointButtons();
+            }
+
+            function setTimePreset(e) {
+                const seconds = parseInt(e.target.getAttribute('data-time'));
+                totalTime = seconds;
+                timeLeft = seconds;
+                updateTimerDisplay();
+
+                if (timerRunning) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    startTimerBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                        </svg>
+                        Démarrer
+                    `;
+                }
+                disablePointButtons();
+            }
+
+            function setCustomTime() {
+                const customSeconds = parseInt(customTimeInput.value);
+                if (customSeconds && customSeconds > 0 && customSeconds <= 300) {
+                    totalTime = customSeconds;
+                    timeLeft = customSeconds;
+                    updateTimerDisplay();
+
+                    if (timerRunning) {
+                        clearInterval(timerInterval);
+                        timerRunning = false;
+                        startTimerBtn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                            </svg>
+                            Démarrer
+                        `;
+                    }
+                    disablePointButtons();
+                    customTimeInput.value = '';
+                }
+            }
+
+            function continueGame() {
+                gameOverModal.classList.remove('active');
+                gameOverModal.classList.add('hidden');
+                timerText.classList.remove('flash');
+                enablePointButtons();
+            }
+
+            function resetGame() {
+                gameOverModal.classList.remove('active');
+                gameOverModal.classList.add('hidden');
+                timeLeft = totalTime;
+                updateTimerDisplay();
+                timerText.classList.remove('flash');
+                disablePointButtons();
+            }
+
+            function toggleScoreSection() {
+                if (scoreSection.classList.contains('hidden')) {
+                    scoreSection.classList.remove('hidden');
+                    toggleScoreBtn.textContent = 'Masquer Scores';
+                } else {
+                    scoreSection.classList.add('hidden');
+                    toggleScoreBtn.textContent = 'Afficher Scores';
+                }
+                updateGridLayout();
+            }
+
+            function toggleTimerSection() {
+                if (timerSection.classList.contains('hidden')) {
+                    timerSection.classList.remove('hidden');
+                    toggleTimerBtn.textContent = 'Masquer Minuteur';
+                } else {
+                    timerSection.classList.add('hidden');
+                    toggleTimerBtn.textContent = 'Afficher Minuteur';
+                }
+                updateGridLayout();
+            }
+
+            function updateGridLayout() {
+                const scoreVisible = !scoreSection.classList.contains('hidden');
+                const timerVisible = !timerSection.classList.contains('hidden');
+
+                if (scoreVisible && timerVisible) {
+                    gameContent.classList.remove('md:grid-cols-1');
+                    gameContent.classList.add('md:grid-cols-2');
+                } else if (scoreVisible || timerVisible) {
+                    gameContent.classList.remove('md:grid-cols-2');
+                    gameContent.classList.add('md:grid-cols-1');
+                } else {
+                    gameContent.classList.remove('md:grid-cols-2');
+                    gameContent.classList.add('md:grid-cols-1');
+                }
+            }
+
+            document.documentElement.style.setProperty('--color-team1', team1Color);
+            document.documentElement.style.setProperty('--color-team2', team2Color);
+            document.documentElement.style.setProperty('--color-primary', team1Color);
+            document.documentElement.style.setProperty('--color-primary-dark', adjustColor(team1Color, -20));
+
+            function adjustColor(color, amount) {
+                return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+            }
+        });
+    </script>
+</body>
+
+</html>
