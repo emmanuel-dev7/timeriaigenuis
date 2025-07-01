@@ -1,1 +1,2 @@
-timer et scoreboard avec une interface utilisateur agreable
+proposition de scoreboard
+avec minuteur 
